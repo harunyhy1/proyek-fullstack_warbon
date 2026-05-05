@@ -1,59 +1,51 @@
-# Proyek-Pemrograman-Fullstack-
+# Proyek Pemrograman Fullstack
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Status-Development-yellow" alt="Status">
+  <img src="https://img.shields.io/badge/Team-Deadline%20Enjoyer-blue" alt="Team Name">
+  
+  <br />
+  <br />
+
+  <h1>🚀 Deadline Enjoyer</h1>
+  <p><i>"Turning pressure into precision."</i></p>
+</div>
+
+---
+
+### 👥 Our Team
+
+Kami adalah tim pengembang yang berdedikasi untuk membangun solusi full-stack yang efisien dan skalabel.
 
 <div align="center">
 
-## **Deadline Enjoyer**
+| **Project Manager** |
+| :---: |
+| <img src="./img/syaril.jpg" width="180px" style="border-radius: 50%;" /><br> **Syahril Arif Adriansyah** <br> <sub>Full Stack Developer</sub> |
+
+<br>
+
+| **Core Developers** | **Core Developers** |
+| :---: | :---: |
+| <img src="./img/omat.jpg" width="150px" /><br> **M. Rizqi Nurrohmat** <br> <sub>Full Stack Developer</sub> | <img src="./img/hanif.jpeg" width="150px" /><br> **M. Shidqi Hanif Firdaus** <br> <sub>Full Stack Developer</sub> |
+| <img src="./img/harun.jpeg" width="150px" /><br> **Harun Yahya** <br> <sub>Full Stack Developer</sub> | <img src="./img/rehan.jpeg" width="150px" /><br> **Achmad Raihan** <br> <sub>Full Stack Developer</sub> |
 
 </div>
 
-<!-- kita akan menggunakan gambar (gambarnya akan saya buatkan dua kolom, jadi satu baris akan ada dua gambar masing-masing kecuali pm akan sendiri diatas) -->
+---
 
-<!-- masukkan gambar kalian difolder ./member-images -->
+### 🛠️ Tech Stack (Contoh Tambahan)
+Agar README lebih informatif, kamu bisa menambahkan teknologi yang digunakan:
+*   **Frontend:** React.js / Next.js
+*   **Backend:** Node.js / Express.js / Laravel
+*   **Database:** PostgreSQL / MySQL
+*   **Tools:** Git, Docker, Kali Linux
 
-<table>
-<!-- untuk project manager -->
-  <tr>
-    <td colspan="2" align="center">
-      <img src="./img/syaril.jpg" alt="pm" width="70%">
-      <br>
-      <strong>Syahril Arif Adriansyah</strong>
-      <br>
-      <em>Full Stack Developer</em>
-    </td>
-  </tr>
-  <!-- tingkatan lead -->
-  <tr>
-    <td align="center">
-      <img src="./img/omat.jpg" alt="Teks Alt Orang 1" width="100%">
-      <br>
-      <strong>Muhammad Rizqi Nurrohmat</strong>
-      <br>
-      <em>Full Stack Developer</em>
-    </td>
-    <td align="center">
-      <img src="./img/hanif.jpeg" alt="Teks Alt Orang 2" width="100%">
-      <br>
-      <strong>Muhammad Shidqi Hanif Firdaus</strong>
-      <br>
-      <em>Full Stack Developer</em>
-    </td>
-  </tr>
+---
 
-  <!-- tingkatan dev -->
-   <tr>
-    <td align="center">
-      <img src="./img/harun.jpeg" alt="Teks Alt Orang 1" width="100%">
-      <br>
-      <strong>Harun Yahya</strong>
-      <br>
-      <em>Full Stack Developer</em>
-    </td>
-    <td align="center">
-      <img src="./img/rehan.jpeg" alt="Teks Alt Orang 2" width="100%">
-      <br>
-      <strong>Achmad Raihan</strong>
-      <br>
-      <em>Full Stack Developer</em>
-    </td>
-  </tr>
-</table>
+### 📝 Kontribusi
+1. Clone repositori ini.
+2. Buat branch baru (`git checkout -b feature-nama`).
+3. Commit perubahan kamu (`git commit -m 'Menambah fitur X'`).
+4. Push ke branch tersebut (`git push origin feature-nama`).
+5. Buat Pull Request.
