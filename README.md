@@ -1,51 +1,103 @@
-# Proyek Pemrograman Fullstack
+# ☕ Deadline Enjoyer — Coffee Shop Web App
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Status-Development-yellow" alt="Status">
-  <img src="https://img.shields.io/badge/Team-Deadline%20Enjoyer-blue" alt="Team Name">
-  
-  <br />
-  <br />
 
-  <h1>🚀 Deadline Enjoyer</h1>
-  <p><i>"Turning pressure into precision."</i></p>
+<img src="https://img.shields.io/badge/Status-Development-yellow" />
+<img src="https://img.shields.io/badge/Team-Deadline%20Enjoyer-brown" />
+<img src="https://img.shields.io/badge/Type-Fullstack%20Web-orange" />
+
+<br /><br />
+
+<h1>☕ Deadline Enjoyer</h1>
+<p><i>“Turning pressure into precision, brewing code like coffee.”</i></p>
+
 </div>
 
 ---
 
-### 👥 Our Team
+## 📖 About The Project
 
-Kami adalah tim pengembang yang berdedikasi untuk membangun solusi full-stack yang efisien dan skalabel.
+**Deadline Enjoyer** adalah aplikasi **web coffee shop berbasis fullstack** yang dirancang untuk mensimulasikan sistem pemesanan kopi secara modern dan profesional.
+
+Aplikasi ini memungkinkan pengguna untuk:
+- Melihat daftar menu kopi
+- Melakukan pemesanan
+- Mengelola data produk dan transaksi
+- Menggunakan sistem backend API yang terstruktur
+
+Proyek ini dibuat sebagai **proyek kolaborasi tim** dengan tujuan menerapkan praktik pengembangan web profesional.
+
+---
+
+## 👥 Team Deadline Enjoyer
 
 <div align="center">
 
-| **Project Manager** |
+### 🧑‍💼 Project Manager
+| |
 | :---: |
-| <img src="./img/syaril.jpg" width="180px" style="border-radius: 50%;" /><br> **Syahril Arif Adriansyah** <br> <sub>Full Stack Developer</sub> |
+| <img src="./img/syaril.jpg" width="180px" style="border-radius: 50%;" /> |
+| **Syahril Arif Adriansyah** |
+| <sub>Full Stack Developer</sub> |
 
 <br>
 
-| **Core Developers** | **Core Developers** |
-| :---: | :---: |
-| <img src="./img/omat.jpg" width="150px" /><br> **M. Rizqi Nurrohmat** <br> <sub>Full Stack Developer</sub> | <img src="./img/hanif.jpeg" width="150px" /><br> **M. Shidqi Hanif Firdaus** <br> <sub>Full Stack Developer</sub> |
-| <img src="./img/harun.jpeg" width="150px" /><br> **Harun Yahya** <br> <sub>Full Stack Developer</sub> | <img src="./img/rehan.jpeg" width="150px" /><br> **Achmad Raihan** <br> <sub>Full Stack Developer</sub> |
+### 👨‍💻 Core Developers
+
+| | | |
+| :---: | :---: | :---: |
+| <img src="./img/omat.jpg" width="150px" /> | <img src="./img/hanif.jpeg" width="150px" /> | <img src="./img/harun.jpg" width="150px" /> |
+| **M. Rizqi Nurrohmat** | **M. Shidqi Hanif Firdaus** | **Harun Yahya** |
+| <sub>Full Stack Developer</sub> | <sub>Full Stack Developer</sub> | <sub>Full Stack Developer</sub> |
+
+<br>
+
+| |
+| :---: |
+| <img src="./img/rehan.jpeg" width="150px" /> |
+| **Achmad Raihan** |
+| <sub>Full Stack Developer</sub> |
 
 </div>
 
 ---
 
-### 🛠️ Tech Stack (Contoh Tambahan)
-Agar README lebih informatif, kamu bisa menambahkan teknologi yang digunakan:
-*   **Frontend:** React.js / Next.js
-*   **Backend:** Node.js / Express.js / Laravel
-*   **Database:** PostgreSQL / MySQL
-*   **Tools:** Git, Docker, Kali Linux
+## 🛠️ Tech Stack
+
+### ☕ Frontend
+- React.js / Next.js
+- HTML5, CSS3, JavaScript
+- Tailwind CSS / Bootstrap
+
+### ☕ Backend
+- Node.js
+- Express.js / Laravel
+- RESTful API
+
+### ☕ Database
+- PostgreSQL / MySQL
+
+### ☕ Tools & Environment
+- Git & GitHub
+- Docker
+- Postman
+- Kali Linux
 
 ---
 
-### 📝 Kontribusi
-1. Clone repositori ini.
-2. Buat branch baru (`git checkout -b feature-nama`).
-3. Commit perubahan kamu (`git commit -m 'Menambah fitur X'`).
-4. Push ke branch tersebut (`git push origin feature-nama`).
-5. Buat Pull Request.
+## ✨ Features (Planned)
+
+- 📋 Coffee menu management
+- 🛒 Order & checkout system
+- 👤 User authentication
+- 📦 Admin dashboard
+- 📊 Order history & reports
+
+---
+
+## 🚀 Getting Started
+
+### 📥 Clone Repository
+```bash
+git clone https://github.com/username/Deadline-Enjoyer.git
+cd Deadline-Enjoyer
