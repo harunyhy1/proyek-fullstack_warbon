@@ -65,3 +65,10 @@ export const createOrder = (body) => request('POST', '/orders', body, true);
 // body: { id_order, metode_pembayaran: 'cash'|'transfer'|'qris' }
 // returns: { success, data: { id_transaksi, id_order, total_harga, metode_pembayaran } }
 export const bayar = (body) => request('POST', '/transaksi', body, true);
+
+// ── AMBIL DATA UNTUK DASHBOARD ADMIN (Tambahkan di api.js) ──
+// GET /api/orders — admin only, melihat semua pesanan masuk
+export const getOrders = () => request('GET', '/orders', null, true);
+
+// GET /api/transaksi — admin only, melihat semua riwayat pembayaran
+export const getTransaksi = () => request('GET', '/transaksi', null, true);

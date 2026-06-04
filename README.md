@@ -99,5 +99,5 @@ Proyek ini dibuat sebagai **proyek kolaborasi tim** dengan tujuan menerapkan pra
 
 ### 📥 Clone Repository
 ```bash
-git clone https://github.com/username/Deadline-Enjoyer.git
-cd Deadline-Enjoyer
+git clone https://github.com/RizqiNur27/Proyek-Pemrograman-Fullstack-.git
+cd Proyek-P
