@@ -21,12 +21,69 @@ export default function AdminPage() {
   const [transaksi, setTransaksi] = useState([]);         // State Baru
   const [loading, setLoading]     = useState(true);
   const [err, setErr]             = useState('');
+  const [toast, setToast]         = useState(null);
+  const [time, setTime] = useState(new Date());
+  
 
   // Modal state untuk Menu
   const [modal, setModal]     = useState(null);  // null | 'menu'
   const [form, setForm]       = useState({ id_kategori: '', nama_menu: '', harga: '' });
   const [editId, setEditId]   = useState(null);
   const [saving, setSaving]   = useState(false);
+
+  // ── FUNGSI SUARA SINTESIS 
+  function playNotificationSound() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.type = 'sine';
+      // Nada melodi "Tring!" ceria (Kombinasi nada D5 ke A5)
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime); 
+      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1); 
+      
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.start();
+      osc.stop(ctx.currentTime + 0.4);
+    } catch (e) {
+      console.log("Audio play blocked by browser interaction policy", e);
+    }
+  }
+
+  useEffect(() => {
+  // Update jam setiap 1 detik (1000 milidetik)
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    // Bersihkan interval saat pindah halaman biar gak memory leak
+    return () => clearInterval(timer);
+  }, []);
+
+  // Helper Format Tanggal Indonesia (Contoh: Kamis, 4 Juni 2026)
+  const formatTanggal = (date) => {
+    return date.toLocaleDateString('id-ID', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  // Helper Format Jam (Contoh: 18:59:34 WIB)
+  const formatJam = (date) => {
+    return date.toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }) + ' WIB';
+  };
 
   // Load semua data dari database secara paralel
   async function loadData() {
@@ -50,7 +107,48 @@ export default function AdminPage() {
     }
   }
 
-  useEffect(() => { loadData(); }, []);
+  // Fungsi khusus untuk nge-cek pesanan baru secara background
+  async function checkNewOrders() {
+    try {
+      const o = await getOrders();
+      const newOrders = o.data || [];
+      
+      setOrders(prevOrders => {
+        // Jika jumlah orderan di database bertambah dari jumlah sebelumnya
+        if (prevOrders.length > 0 && newOrders.length > prevOrders.length) {
+          const latestOrder = newOrders[newOrders.length - 1]; // Ambil orderan paling terakhir masuk
+          
+          // Trigger Toast Pop-up
+          setToast({
+            kode: latestOrder.kode_order,
+            total: latestOrder.total_tagihan
+          });
+          
+          // Bunyikan Bell Kasir
+          playNotificationSound();
+          
+          // Hilangkan toast secara otomatis setelah 4 detik
+          setTimeout(() => setToast(null), 4000);
+        }
+        return newOrders;
+      });
+    } catch (e) {
+      console.error("Gagal melakukan background check pesanan:", e);
+    }
+  }
+
+  // Jalankan polling saat halaman admin terbuka
+  useEffect(() => {
+    loadData(); // Load pertama kali untuk semua data
+
+    // Set interval biar aplikasi nge-cek ke backend tiap 5000ms (5 detik)
+    const intervalId = setInterval(() => {
+      checkNewOrders();
+    }, 5000);
+
+    // Bersihkan interval kalau admin pindah halaman biar gak memory leak
+    return () => clearInterval(intervalId);
+  }, []);
 
   // Handler Menu (Bawaan lama tetap aman bray)
   function openAdd() {
@@ -97,6 +195,12 @@ export default function AdminPage() {
   const totalOmset      = transaksi.reduce((sum, t) => sum + t.total_harga, 0);
   const jumlahPesanan   = orders.length;
   const transaksiSukses = transaksi.length;
+  // Tambahan data leaderboard untuk demo kelompok bray
+  const menuTerlaris = [
+    { nama: 'Es Kopi Susu Warkop', terjual: 48, harga: 15000, emoji: '☕' },
+    { nama: 'Mie Instan Goreng Nyemek', terjual: 36, harga: 12000, emoji: '🍜' },
+    { nama: 'Pancong Lumer Keju', terjual: 24, height: 10000, emoji: '🥞' },
+  ];
 
   return (
     <div className="admin-page">
@@ -141,6 +245,46 @@ export default function AdminPage() {
               <p>Analisis riil performa bisnis Warkop Digital kamu.</p>
             </div>
             
+            {/* ── WIDGET JAM & TANGGAL REALTIME OVERVIEW ── */}
+            <div className="admin-clock-widget" style={{
+              background: '#1e1e1e',
+              borderLeft: '5px solid #FF9057', // Warna khas warkop kita bray
+              borderRadius: '8px',
+              padding: '15px 25px',
+              marginBottom: '25px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+              borderTop: '1px solid #2d2d2d',
+              borderRight: '1px solid #2d2d2d',
+              borderBottom: '1px solid #2d2d2d'
+            }}>
+              <div>
+                <span style={{ color: '#aaa', fontSize: '12px', uppercase: 'true', letterSpacing: '1px' }}>
+                  🗓️ TANGGAL OPERASIONAL
+                </span>
+                <h3 style={{ color: '#fff', margin: '5px 0 0 0', fontSize: '18px', fontWeight: '600' }}>
+                  {formatTanggal(time)}
+                </h3>
+              </div>
+              
+              <div style={{ textAlign: 'right' }}>
+                <span style={{ color: '#aaa', fontSize: '12px', letterSpacing: '1px' }}>
+                  ⏰ WAKTU DIGITAL
+                </span>
+                <h2 style={{ 
+                  color: '#FF9057', 
+                  margin: '5px 0 0 0', 
+                  fontSize: '24px', 
+                  fontWeight: 'bold',
+                  fontFamily: 'monospace' // Biar angka jamnya anteng pas detiknya berubah
+                }}>
+                  {formatJam(time)}
+                </h2>
+              </div>
+            </div>
+
             {loading ? <Spinner /> : (
               <>
                 {/* Grid Statistik Keuangan Riil */}
@@ -153,7 +297,7 @@ export default function AdminPage() {
 
                 {/* Seksi Tampilan Cepat Pesanan Terbaru */}
                 <div className="admin-section-title" style={{marginTop: '30px'}}>Aktivitas Terkini</div>
-                <div className="dashboard-double-column" style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
+                <div className="dashboard-double-column" style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px'}}>
                   
                   {/* Mini Live Order */}
                   <div className="mini-card-panel" style={{background: '#1e1e1e', padding: '20px', borderRadius: '12px'}}>
@@ -181,6 +325,23 @@ export default function AdminPage() {
                       ))}
                       {transaksi.length === 0 && <p style={{color: '#666'}}>Belum ada pembayaran masuk.</p>}
                     </ul>
+                  </div>
+                  <div className="mini-card-panel" style={{background: '#1e1e1e', padding: '20px', borderRadius: '12px'}}>
+                    <h3>🔥 Menu Terlaris (Leaderboard)</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '15px' }}>
+                      {menuTerlaris.map((item, idx) => (
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div style={{ fontSize: '20px', background: '#2d2d2d', width: '40px', height: '40px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {item.emoji}
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#fff' }}>{item.nama}</div>
+                            <div style={{ fontSize: '11px', color: '#888' }}>{item.terjual} Porsi Terjual</div>
+                          </div>
+                          <span style={{ fontSize: '13px', color: '#FF9057', fontWeight: 'bold' }}>{formatRp(item.harga)}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                 </div>
@@ -409,6 +570,17 @@ export default function AdminPage() {
               </div>
             </form>
           </div>
+        </div>
+      )}
+      {toast && (
+        <div className="toast-notification" onClick={() => setToast(null)}>
+          <div className="toast-icon">🛎️</div>
+          <div className="toast-body">
+            <div className="toast-title">Pesanan Baru Masuk!</div>
+            <div className="toast-desc">Kode: <strong>{toast.kode}</strong></div>
+            <div className="toast-sub">{formatRp(toast.total)} • Segera cek dapur</div>
+          </div>
+          <button className="toast-close">✕</button>
         </div>
       )}
     </div>

@@ -4,6 +4,7 @@ const MenuController = require("../controller/menuController");
 const KategoriController = require("../controller/kategoriController");
 const OrderController = require("../controller/orderController");
 const TransaksiController = require("../controller/transaksiController");
+const dashboardController = require('../controller/dashboardController');
 const express = require("express");
 const router = express.Router();
 
@@ -32,5 +33,6 @@ router.post("/transaksi", auth, TransaksiController.bayar);
 router.post("/menu", auth, authorize("admin"), MenuController.store);
 router.put("/menu/:id", auth, authorize("admin"), MenuController.update);
 router.delete("/menu/:id", auth, authorize("admin"), MenuController.destroy);
+router.get('/dashboard/overview', dashboardController.getDashboardOverview);
 
 module.exports = router;
