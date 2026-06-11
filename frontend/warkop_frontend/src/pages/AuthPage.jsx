@@ -42,7 +42,7 @@ export default function AuthPage({ onSuccess }) {
       <div className="auth-card">
         <div className="auth-brand">
           <span className="auth-logo">☕</span>
-          <h1>Warkop Digital</h1>
+          <h1>Warkop Sibontot</h1>
           <p>Pesan dari mana saja, kapan saja</p>
         </div>
 

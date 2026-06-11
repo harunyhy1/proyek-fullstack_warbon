@@ -105,7 +105,7 @@ export default function AdminPage() {
         <div className="sidebar-brand">
           <span>☕</span>
           <div>
-            <div className="brand-name">Warkop Digital</div>
+            <div className="brand-name">Warkop Sibontot</div>
             <div className="brand-sub">Management Panel</div>
           </div>
         </div>
@@ -131,14 +131,14 @@ export default function AdminPage() {
 
       {/* ── MAIN CONTENT AREA ── */}
       <div className="admin-main">
-        {err && <div className="err-box" style={{marginBotton: '15px'}}>⚠️ Error: {err}</div>}
+        {err && <div className="err-box" style={{marginBottom: '15px'}}>⚠️ Error: {err}</div>}
 
         {/* ── 1. DASHBOARD TAB OVERVIEW ── */}
         {tab === 'dashboard' && (
           <>
             <div className="admin-header">
               <h1>Dashboard Overview</h1>
-              <p>Analisis riil performa bisnis Warkop Digital kamu.</p>
+              <p>Analisis riil performa bisnis Warkop Sibontot kamu.</p>
             </div>
             
             {loading ? <Spinner /> : (

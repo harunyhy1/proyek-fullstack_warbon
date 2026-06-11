@@ -10,7 +10,7 @@ export default function Navbar({ page, setPage, onShowAuth }) {
       <div className="nav-brand" onClick={() => setPage('menu')} style={{ cursor: 'pointer' }}>
         <span className="nav-logo">☕</span>
         <div>
-          <div className="nav-title">Warkop Digital</div>
+          <div className="nav-title">Warkop Sibontot</div>
           <div className="nav-sub">Online Ordering System</div>
         </div>
       </div>
