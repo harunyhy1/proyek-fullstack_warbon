@@ -8,7 +8,7 @@
 
 <br /><br />
 
-<h1>☕ Deadline Enjoyer</h1>
+<h1>Deadline Enjoyer</h1>
 <p><i>“Turning pressure into precision, brewing code like coffee.”</i></p>
 
 </div>
@@ -17,12 +17,12 @@
 
 ## 📖 About The Project
 
-**Deadline Enjoyer** adalah aplikasi **web coffee shop berbasis fullstack** yang dirancang untuk mensimulasikan sistem pemesanan kopi secara modern dan profesional.
+**Warkop Si Bontot** adalah aplikasi berbasis web **warkop kekinian** yang berbasis fullstack yang dirancang untuk mensimulasikan sistem pemesanan menu secara modern dan profesional.
 
 Aplikasi ini memungkinkan pengguna untuk:
-- Melihat daftar menu kopi
+- Melihat daftar menu
 - Melakukan pemesanan
-- Mengelola data produk dan transaksi
+- Mengelola data menu dan transaksi
 - Menggunakan sistem backend API yang terstruktur
 
 Proyek ini dibuat sebagai **proyek kolaborasi tim** dengan tujuan menerapkan praktik pengembangan web profesional.
@@ -36,7 +36,7 @@ Proyek ini dibuat sebagai **proyek kolaborasi tim** dengan tujuan menerapkan pra
 ### 🧑‍💼 Project Manager
 | |
 | :---: |
-| <img src="./img/syaril.jpg" width="180px" style="border-radius: 50%;" /> |
+| <img src="./img/syahril.jpg" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;" /> |
 | **Syahril Arif Adriansyah** |
 | <sub>Full Stack Developer</sub> |
 
@@ -46,7 +46,7 @@ Proyek ini dibuat sebagai **proyek kolaborasi tim** dengan tujuan menerapkan pra
 
 | | | |
 | :---: | :---: | :---: |
-| <img src="./img/omat.jpg" width="150px" /> | <img src="./img/hanif.jpeg" width="150px" /> | <img src="./img/harun.jpg" width="150px" /> |
+| <img src="./img/omat.jpg" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;" /> | <img src="./img/hanif.jpeg" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;" /> | <img src="./img/harun.jpg" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;" /> |
 | **M. Rizqi Nurrohmat** | **M. Shidqi Hanif Firdaus** | **Harun Yahya** |
 | <sub>Full Stack Developer</sub> | <sub>Full Stack Developer</sub> | <sub>Full Stack Developer</sub> |
 
@@ -54,7 +54,7 @@ Proyek ini dibuat sebagai **proyek kolaborasi tim** dengan tujuan menerapkan pra
 
 | |
 | :---: |
-| <img src="./img/rehan.jpeg" width="150px" /> |
+| <img src="./img/rehan.jpeg" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;" /> |
 | **Achmad Raihan** |
 | <sub>Full Stack Developer</sub> |
 
