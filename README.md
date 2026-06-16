@@ -1,4 +1,4 @@
-# ☕ Deadline Enjoyer — Coffee Shop Web App
+# ☕ Deadline Enjoyer — Modern Warkop Web App
 
 <div align="center">
 
