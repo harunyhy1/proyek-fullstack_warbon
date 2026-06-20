@@ -695,11 +695,69 @@ html, body {
   font-size: 14px;
 }
 
+/* ── TOAST NOTIFICATION STYLING ── */
+.toast-notification {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: #1e1e1e;
+  border-left: 5px solid #FF9057; /* Warna orange khas warkop */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  z-index: 9999;
+  cursor: pointer;
+  animation: slideInRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  min-width: 280px;
+}
+
+.toast-icon {
+  font-size: 28px;
+  animation: bellRing 0.5s ease-in-out infinite alternate;
+}
+
+.toast-title {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.toast-desc {
+  color: #FF9057;
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.toast-sub {
+  color: #aaa;
+  font-size: 11px;
+  margin-top: 1px;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.toast-close:hover {
+  color: #fff;
+}
+
+
 /* =====================================================
    ANIMATIONS
    ===================================================== */
-@keyframes fadeIn   { from { opacity: 0 } to { opacity: 1 } }
-@keyframes slideUp  { from { opacity: 0; transform: translateY(20px) } to { opacity: 1; transform: translateY(0) } }
-@keyframes slideLeft{ from { opacity: 0; transform: translateX(40px) } to { opacity: 1; transform: translateX(0) } }
-@keyframes spin     { to { transform: rotate(360deg) } }
-@keyframes popIn    { from { opacity: 0; transform: scale(.8) translateY(10px) } to { opacity: 1; transform: scale(1) translateY(0) } }
+@keyframes fadeIn       { from { opacity: 0 } to { opacity: 1 } }
+@keyframes slideUp      { from { opacity: 0; transform: translateY(20px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes slideLeft    { from { opacity: 0; transform: translateX(40px) } to { opacity: 1; transform: translateX(0) } }
+@keyframes spin         { to { transform: rotate(360deg) } }
+@keyframes popIn        { from { opacity: 0; transform: scale(.8) translateY(10px) } to { opacity: 1; transform: scale(1) translateY(0) } }
+@keyframes bellRing     { 0% { transform: rotate(-10deg); } 100% { transform: rotate(10deg); } }
+@keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }

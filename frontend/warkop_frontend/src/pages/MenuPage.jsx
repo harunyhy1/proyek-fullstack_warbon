@@ -24,6 +24,9 @@ export default function MenuPage({ onShowAuth }) {
   const [processing, setProcessing] = useState(false);
   const [err, setErr]            = useState('');
 
+  // ── FITUR BARU: State untuk pencarian menu ──
+  const [searchQuery, setSearchQuery] = useState('');
+
   useEffect(() => {
     Promise.all([getMenu(), getKategori()])
       .then(([m, k]) => {
@@ -34,9 +37,12 @@ export default function MenuPage({ onShowAuth }) {
       .finally(() => setLoading(false));
   }, []);
 
-  const filtered = activeKat === 'semua'
-    ? menu
-    : menu.filter(m => m.id_kategori === activeKat);
+  // ── FILTER GABUNGAN: Kategori + Search Bar ──
+  const filtered = menu.filter(m => {
+    const matchesCategory = activeKat === 'semua' || m.id_kategori === activeKat;
+    const matchesSearch = m.nama_menu.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   async function handleOrder() {
     if (!user) { onShowAuth?.(); return; }
@@ -81,9 +87,31 @@ export default function MenuPage({ onShowAuth }) {
   }
 
   return (
-    <div className="menu-page">
+    <div className="menu-page" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+      
+      {/* ── FITUR BARU: Search Bar Premium di Bagian Atas ── */}
+      <div className="search-wrapper" style={{ marginBottom: '25px' }}>
+        <input 
+          type="text" 
+          placeholder="🔎 Lagi pengen ngopi apa hari ini bray? Cari di sini..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '14px 20px',
+            background: '#1e1e1e',
+            border: '1px solid #333',
+            borderRadius: '10px',
+            color: '#fff',
+            fontSize: '14px',
+            outline: 'none',
+            boxSizing: 'border-box'
+          }}
+        />
+      </div>
+
       {/* ── Kategori filter ── */}
-      <div className="kat-bar">
+      <div className="kat-bar" style={{ marginBottom: '25px' }}>
         <button
           className={activeKat === 'semua' ? 'kat-btn active' : 'kat-btn'}
           onClick={() => setActiveKat('semua')}
@@ -104,30 +132,50 @@ export default function MenuPage({ onShowAuth }) {
           <p>Memuat menu...</p>
         </div>
       ) : (
-        <div className="menu-grid">
+        <div className="menu-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '20px' }}>
           {filtered.map(m => {
             const inCart = items.find(i => i.id_menu === m.id_menu);
             return (
-              <div key={m.id_menu} className="menu-card">
-                <div className="menu-img">{getCategoryEmoji(m.id_kategori, kategori)}</div>
-                <div className="menu-body">
-                  <h3>{m.nama_menu}</h3>
-                  <span className="menu-price">{formatRp(m.harga)}</span>
-                  {inCart ? (
-                    <div className="qty-ctrl">
-                      <button onClick={() => updateQty(m.id_menu, inCart.jumlah - 1)}>−</button>
-                      <span>{inCart.jumlah}</span>
-                      <button onClick={() => updateQty(m.id_menu, inCart.jumlah + 1)}>+</button>
-                    </div>
-                  ) : (
-                    <button className="add-btn" onClick={() => addItem(m)}>+ Tambah</button>
-                  )}
+              <div key={m.id_menu} className="menu-card" style={{ background: '#1e1e1e', borderRadius: '12px', padding: '20px', position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                
+                {/* FITUR BARU: Badge Tag Rekomendasi di Sudut Atas Card */}
+                <span style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(255, 144, 87, 0.15)', color: '#FF9057', fontSize: '11px', padding: '4px 10px', borderRadius: '20px', fontWeight: 'bold' }}>
+                  🔥 Best Seller
+                </span>
+
+                <div className="menu-img" style={{ fontSize: '50px', textAlign: 'center', margin: '15px 0 10px 0' }}>
+                  {getCategoryEmoji(m.id_kategori, kategori)}
+                </div>
+
+                <div className="menu-body" style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                  <h3 style={{ fontSize: '16px', margin: '0 0 6px 0', color: '#fff' }}>{m.nama_menu}</h3>
+                  
+                  {/* FITUR BARU: Deskripsi Menu Biar Card Keliatan Berisi & Padat */}
+                  <p style={{ fontSize: '12px', color: '#aaa', margin: '0 0 20px 0', lineHeight: '1.4', flexGrow: 1 }}>
+                    Racikan mantap khas Warkop Digital, dibuat fresh pas lo order bray.
+                  </p>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+                    <span className="menu-price" style={{ color: '#FF9057', fontWeight: 'bold', fontSize: '15px' }}>{formatRp(m.harga)}</span>
+                    {inCart ? (
+                      <div className="qty-ctrl">
+                        <button onClick={() => updateQty(m.id_menu, inCart.jumlah - 1)}>−</button>
+                        <span>{inCart.jumlah}</span>
+                        <button onClick={() => updateQty(m.id_menu, inCart.jumlah + 1)}>+</button>
+                      </div>
+                    ) : (
+                      <button className="add-btn" onClick={() => addItem(m)}>+ Tambah</button>
+                    )}
+                  </div>
                 </div>
               </div>
             );
           })}
+          
           {filtered.length === 0 && (
-            <div className="empty-state">Menu belum tersedia di kategori ini</div>
+            <div className="empty-state" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: '#666' }}>
+              Menu belum tersedia atau tidak ditemukan bray.
+            </div>
           )}
         </div>
       )}
@@ -246,7 +294,7 @@ export default function MenuPage({ onShowAuth }) {
                 <div className="sukses-icon">✅</div>
                 <h2>Pembayaran Berhasil!</h2>
                 <div className="sukses-detail">
-                  <div className="sd-row"><span>No. Transaksi</span><strong>#{transaksiResult.id_transaksi}</strong></div>
+                  <div className="sd-row"><span>No. Transaksi</span>#<strong>{transaksiResult.id_transaksi}</strong></div>
                   <div className="sd-row"><span>Metode</span><strong style={{ textTransform:'capitalize' }}>{transaksiResult.metode_pembayaran}</strong></div>
                   <div className="sd-row"><span>Total</span><strong>{formatRp(transaksiResult.total_harga)}</strong></div>
                 </div>
