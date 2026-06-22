@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
-import Navbar    from './components/Navbar';
+import DashNavbar    from './components/Navbar';
 import LandingPage from './pages/LandingPage';
 import MenuPage  from './pages/MenuPage';
 import AdminPage from './pages/AdminPage';
@@ -25,14 +25,14 @@ function AppInner() {
   return (
     <div className="app">
       {currentPage !== 'landing' && (
-        <Navbar
+        <DashNavbar
           page={currentPage}
           setPage={setPage}
           onShowAuth={() => setShowAuth(true)}
         />
       )}
 
-      {currentPage === 'landing' && <LandingPage onShowAuth={() => setShowAuth(true)} />}
+      {currentPage === 'landing' && <LandingPage onNavigate={setPage} onShowAuth={() => setShowAuth(true)} />}
 
       <main className="app-main">
         {currentPage === 'menu'  && <MenuPage  onShowAuth={() => setShowAuth(true)} />}

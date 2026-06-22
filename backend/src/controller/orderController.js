@@ -4,7 +4,7 @@ const errorHandler = require("../utils/errorhandler");
 class OrderController {
     async create(req, res) {
         try {
-            const id_user = req.user.id; 
+            const id_user = req.user ? req.user.id : null;
             // Ambil tipe_layanan, catatan dihapus karena tidak ada di DB
             const { tipe_layanan, items } = req.body;
 

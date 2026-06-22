@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { 
-  getMenu, 
-  getKategori, 
-  createMenu, 
-  updateMenu, 
-  deleteMenu, 
+import {
+  getMenu,
+  getKategori,
+  createMenu,
+  updateMenu,
+  deleteMenu,
   getOrders,      // Tambahan API pro
   getTransaksi    // Tambahan API pro
 } from '../api';
@@ -96,15 +96,17 @@ export default function AdminPage() {
         getTransaksi().catch(() => ({ data: [] }))   // fallback biar ga crash klo backend blm siap
       ]);
       
-      setMenu(m.data || []);
-      setKategori(k.data || []);
-      setOrders(o.data || []);
-      setTransaksi(t.data || []);
-    } catch (e) {
-      setErr(e.message);
-    } finally {
-      setLoading(false);
+        setMenu(Array.isArray(m) ? m : m.data || []);
+        setKategori(Array.isArray(k) ? k : k.data || []);
+        setOrders(Array.isArray(o) ? o : o.data || []);
+        setTransaksi(Array.isArray(t) ? t : t.data || []);
     }
+      catch (e) {
+        setErr(e.message);
+      } finally {
+        setLoading(false);
+      }
+
   }
 
   // Fungsi khusus untuk nge-cek pesanan baru secara background

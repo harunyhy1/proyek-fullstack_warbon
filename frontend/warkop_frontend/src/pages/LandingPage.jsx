@@ -195,7 +195,7 @@ export default function LandingPage({ onNavigate }) {
                     <li className="nav-item"><a className="nav-link" href="#tim">Tim Kami</a></li>
                     <li className="nav-item"><a className="nav-link" href="#testimoni">Testimoni</a></li>
                     <li className="nav-item ms-lg-2 mt-2 mt-lg-0">
-                        <button className="btn-nav-order" onClick={() => onNavigate?.('')}>Pesan Sekarang!</button>
+                        <button className="btn-nav-order" onClick={() => onNavigate?.('menu')}>Pesan Sekarang!</button>
                     </li>
                     </ul>
                 </div>
