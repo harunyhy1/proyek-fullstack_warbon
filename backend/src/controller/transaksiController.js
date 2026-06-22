@@ -25,6 +25,23 @@ class TransaksiController {
             return errorHandler(res, err, 400, err.message || "Gagal memproses pembayaran");
         }
     }
+
+    async index(req, res) {
+        try {
+            // Memanggil fungsi getAll dari model transaksi yang sudah kita buat
+            const daftarTransaksi = await Transaksi.getAll(); 
+            
+            res.status(200).json({
+                success: true,
+                data: daftarTransaksi
+            });
+        } catch (err) {
+            return res.status(500).json({ 
+                success: false, 
+                message: err.message || "Gagal mengambil riwayat transaksi" 
+            });
+        }
+    }
 }
 
 module.exports = new TransaksiController();

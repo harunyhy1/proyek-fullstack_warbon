@@ -1,6 +1,11 @@
 const db = require('../config/db');
 
 class Transaksi {
+
+    static async getAll() {
+        const [rows] = await db.query('SELECT * FROM transaksi');
+        return rows;
+    }
     static async prosesPembayaran(id_order, metode_pembayaran) {
         const connection = await db.getConnection();
         

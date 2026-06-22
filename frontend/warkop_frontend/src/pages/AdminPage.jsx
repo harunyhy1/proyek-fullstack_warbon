@@ -5,8 +5,9 @@ import {
   createMenu,
   updateMenu,
   deleteMenu,
-  getOrders,      // Tambahan API pro
-  getTransaksi    // Tambahan API pro
+  getOrders,
+  getTransaksi,
+  bayar
 } from '../api';
 
 function formatRp(n) {
@@ -27,6 +28,8 @@ export default function AdminPage() {
 
   // Modal state untuk Menu
   const [modal, setModal]     = useState(null);  // null | 'menu'
+  const [modalBayar, setModalBayar] = useState(null);
+  const [metodeBayar, setMetodeBayar] = useState('cash');
   const [form, setForm]       = useState({ id_kategori: '', nama_menu: '', harga: '' });
   const [editId, setEditId]   = useState(null);
   const [saving, setSaving]   = useState(false);
@@ -90,10 +93,10 @@ export default function AdminPage() {
     setLoading(true);
     try {
       const [m, k, o, t] = await Promise.all([
-        getMenu(), 
-        getKategori(), 
-        getOrders().catch(() => ({ data: [] })),      // fallback biar ga crash klo backend blm siap
-        getTransaksi().catch(() => ({ data: [] }))   // fallback biar ga crash klo backend blm siap
+        getMenu(),
+        getKategori(),
+        getOrders(),
+        getTransaksi()
       ]);
       
         setMenu(Array.isArray(m) ? m : m.data || []);
@@ -107,6 +110,17 @@ export default function AdminPage() {
         setLoading(false);
       }
 
+  }
+
+  async function submitBayar() {
+    try {
+      await bayar({ id_order: modalBayar, metode_pembayaran: metodeBayar });
+      alert("Pembayaran berhasil!");
+      setModalBayar(null);
+      loadData();
+    } catch (e) {
+      alert("Gagal memproses: " + e.message);
+    }
   }
 
   // Fungsi khusus untuk nge-cek pesanan baru secara background
@@ -208,13 +222,6 @@ export default function AdminPage() {
     <div className="admin-page">
       {/* ── SIDEBAR BARU: LEBIH LENGKAP & PRO ── */}
       <aside className="admin-sidebar">
-        <div className="sidebar-brand">
-          <span>☕</span>
-          <div>
-            <div className="brand-name">Warkop Sibontot</div>
-            <div className="brand-sub">Management Panel</div>
-          </div>
-        </div>
         <nav>
           {[
             { key: 'dashboard', icon: '📊', label: 'Dashboard Overview' },
@@ -383,16 +390,35 @@ export default function AdminPage() {
                           </td>
                           <td><strong>{formatRp(o.total_tagihan)}</strong></td>
                           <td>
-                            <span style={{
-                              padding: '4px 10px', 
-                              borderRadius: '20px', 
-                              fontSize: '12px',
-                              background: isPaid ? 'rgba(45, 212, 160, 0.2)' : 'rgba(255, 144, 87, 0.2)',
-                              color: isPaid ? '#2DD4A0' : '#FF9057',
-                              border: isPaid ? '1px solid #2DD4A0' : '1px solid #FF9057'
-                            }}>
-                              {isPaid ? '✓ Lunas' : '⏳ Menunggu Pembayaran'}
-                            </span>
+                            {o.status === 'selesai' ? (
+                              <span style={{
+                                padding: '4px 10px',
+                                borderRadius: '20px',
+                                fontSize: '12px',
+                                background: 'rgba(45, 212, 160, 0.2)',
+                                color: '#2DD4A0',
+                                border: '1px solid #2DD4A0'
+                              }}>
+                                ✓ Lunas
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => setModalBayar(o.id_order)}
+                                style={{
+                                  padding: '6px 12px',
+                                  borderRadius: '6px',
+                                  fontSize: '12px',
+                                  background: '#FF9057',
+                                  color: '#fff',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  fontWeight: 'bold',
+                                  boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                                }}
+                              >
+                                ⏳ Proses Bayar
+                              </button>
+                            )}
                           </td>
                         </tr>
                       );
@@ -583,6 +609,27 @@ export default function AdminPage() {
             <div className="toast-sub">{formatRp(toast.total)} • Segera cek dapur</div>
           </div>
           <button className="toast-close">✕</button>
+        </div>
+      )}
+
+      {modalBayar && (
+        <div className="modal-overlay" onClick={() => setModalBayar(null)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <h3>Pilih Metode Pembayaran</h3>
+            <select
+              value={metodeBayar}
+              onChange={(e) => setMetodeBayar(e.target.value)}
+              style={{ width: '100%', padding: '10px', margin: '20px 0' }}
+            >
+              <option value="cash">Cash</option>
+              <option value="qris">QRIS</option>
+              <option value="transfer">Transfer</option>
+            </select>
+            <div className="modal-footer">
+              <button onClick={() => setModalBayar(null)}>Batal</button>
+              <button onClick={submitBayar} className="btn-primary">Konfirmasi</button>
+            </div>
+          </div>
         </div>
       )}
     </div>

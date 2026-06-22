@@ -1,6 +1,17 @@
 const db = require('../config/db');
 
 class Order {
+
+    static async getAll() {
+        const query = `
+            SELECT o.*,
+                    COALESCE((SELECT SUM(subtotal) FROM order_detail od WHERE od.id_order = o.id_order), 0) AS total_tagihan
+            FROM orders o
+            ORDER BY o.tanggal DESC
+        `;
+        const [rows] = await db.query(query);
+        return rows;
+    }
     static async createOrder(id_user, tipe_layanan, items) {
         const connection = await db.getConnection(); 
         

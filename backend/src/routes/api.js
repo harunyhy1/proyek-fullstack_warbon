@@ -35,4 +35,7 @@ router.put("/menu/:id", auth, authorize("admin"), MenuController.update);
 router.delete("/menu/:id", auth, authorize("admin"), MenuController.destroy);
 router.get('/dashboard/overview', dashboardController.getDashboardOverview);
 
+router.get("/orders", auth, authorize("admin"), OrderController.index);
+router.get("/transaksi", auth, authorize("admin"), TransaksiController.index);
+
 module.exports = router;

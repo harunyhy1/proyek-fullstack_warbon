@@ -28,6 +28,21 @@ class OrderController {
             return errorHandler(res, err, 500, err.message || "Gagal membuat pesanan");
         }
     }
+
+    async index(req, res) {
+        try {
+            // Memanggil fungsi dari model untuk mengambil semua data pesanan
+            // Pastikan di file model/order.js kamu memiliki fungsi getAll() atau sesuaikan namanya
+            const orders = await Order.getAll(); 
+            
+            res.status(200).json({
+                success: true,
+                data: orders
+            });
+        } catch (err) {
+            return errorHandler(res, err, 500, err.message || "Gagal mengambil daftar pesanan");
+        }
+    }
 }
 
 module.exports = new OrderController();
