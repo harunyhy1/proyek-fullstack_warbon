@@ -53,7 +53,7 @@ html, body {
 /* =====================================================
    NAVBAR
    ===================================================== */
-.navbar {
+.dash-navbar {
   display: flex;
   align-items: center;
   gap: 20px;

@@ -58,7 +58,7 @@ export const deleteMenu = (id) => request('DELETE', `/menu/${id}`, null, true);
 // POST /api/orders  — auth required
 // body: { tipe_layanan: 'dine_in'|'take_away', items: [{id_menu, jumlah}] }
 // returns: { success, data: { id_order, kode_order, total_tagihan } }
-export const createOrder = (body) => request('POST', '/orders', body, true);
+export const createOrder = (body) => request('POST', '/orders', body);
 
 // ── TRANSAKSI ────────────────────────────────────────────
 // POST /api/transaksi  — auth required

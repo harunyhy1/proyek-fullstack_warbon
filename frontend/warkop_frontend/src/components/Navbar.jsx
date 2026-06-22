@@ -1,12 +1,12 @@
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
-export default function Navbar({ page, setPage, onShowAuth }) {
+export default function DashNavbar({ page, setPage, onShowAuth }) {
   const { user, logout, isAdmin } = useAuth();
   const { itemCount } = useCart();
 
   return (
-    <nav className="navbar">
+    <nav className="dash-navbar">
       <div className="nav-brand" onClick={() => setPage('menu')} style={{ cursor: 'pointer' }}>
         <span className="nav-logo">☕</span>
         <div>

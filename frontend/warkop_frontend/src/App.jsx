@@ -2,14 +2,17 @@ import { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Navbar    from './components/Navbar';
+import LandingPage from './pages/LandingPage';
 import MenuPage  from './pages/MenuPage';
 import AdminPage from './pages/AdminPage';
 import AuthPage  from './pages/AuthPage';
+
+
 import './App.css';
 
 function AppInner() {
   const { user, isAdmin } = useAuth();
-  const [page, setPage]     = useState('menu');
+  const [page, setPage]     = useState('landing');
   const [showAuth, setShowAuth] = useState(false);
 
   function handleAuthSuccess() {
@@ -21,11 +24,15 @@ function AppInner() {
 
   return (
     <div className="app">
-      <Navbar
-        page={currentPage}
-        setPage={setPage}
-        onShowAuth={() => setShowAuth(true)}
-      />
+      {currentPage !== 'landing' && (
+        <Navbar
+          page={currentPage}
+          setPage={setPage}
+          onShowAuth={() => setShowAuth(true)}
+        />
+      )}
+
+      {currentPage === 'landing' && <LandingPage onShowAuth={() => setShowAuth(true)} />}
 
       <main className="app-main">
         {currentPage === 'menu'  && <MenuPage  onShowAuth={() => setShowAuth(true)} />}

@@ -22,8 +22,8 @@ router.get("/", (req, res) =>{
 router.get("/menu", MenuController.index);
 router.get("/menu/:id", MenuController.show);
 router.get("/kategori", KategoriController.index);
-router.post("/orders", auth, OrderController.create);
-router.post("/transaksi", auth, TransaksiController.bayar);
+router.post("/orders", OrderController.create);
+router.post("/transaksi", TransaksiController.bayar);
 
 
 // ==========================================

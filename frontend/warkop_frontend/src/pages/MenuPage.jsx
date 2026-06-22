@@ -19,6 +19,7 @@ export default function MenuPage({ onShowAuth }) {
   const [step, setStep]         = useState('cart');   // 'cart' | 'tipe' | 'bayar' | 'sukses'
   const [tipeLayanan, setTipeLayanan] = useState('dine_in');
   const [metodeBayar, setMetodeBayar] = useState('cash');
+  const [namaPemesan, setNamaPemesan] = useState('');
   const [orderResult, setOrderResult] = useState(null);
   const [transaksiResult, setTransaksiResult] = useState(null);
   const [processing, setProcessing] = useState(false);
@@ -45,7 +46,7 @@ export default function MenuPage({ onShowAuth }) {
   });
 
   async function handleOrder() {
-    if (!user) { onShowAuth?.(); return; }
+    
     if (items.length === 0) return;
     setProcessing(true);
     setErr('');
@@ -61,13 +62,39 @@ export default function MenuPage({ onShowAuth }) {
     } finally {
       setProcessing(false);
     }
-  }
 
-  async function handleBayar() {
+    if (!namaPemesan.trim()) {
+      setErr('Mohon masukkan nama kamu agar pesanan tidak tertukar ya!');
+      return;
+    }
+
     setProcessing(true);
     setErr('');
     try {
-      const res = await bayar({ id_order: orderResult.id_order, metode_pembayaran: metodeBayar });
+      const res = await createOrder({
+        nama_pemesan: namaPemesan, // Kirimkan nama ke backend
+        tipe_layanan: tipeLayanan,
+        items: items.map(i => ({ id_menu: i.id_menu, jumlah: i.jumlah })),
+      });
+      setOrderResult(res.data);
+      setStep('bayar');
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setProcessing(false);
+    }
+  }
+
+  async function handleBayar() {
+
+    if (!namaPemesan.trim()) {
+      setErr('Mohon masukkan nama kamu agar pesanan tidak tertukar!');
+      return;
+    }
+    setProcessing(true);
+    setErr('');
+    try {
+      const res = await bayar({ id_order: orderResult.id_order, metode_pembayaran: metodeBayar, nama_pemesan: namaPemesan });
       setTransaksiResult(res.data);
       setStep('sukses');
       clearCart();
@@ -242,6 +269,16 @@ export default function MenuPage({ onShowAuth }) {
                       {tipeLayanan === t.val && <span className="check">✓</span>}
                     </div>
                   ))}
+                </div>
+                <div className="field" style={{ padding: '0 20px', marginBottom: '16px', marginTop: '16px' }}>
+                  <label>Atas Nama (Untuk Panggilan)</label>
+                  <input
+                    type="text"
+                    placeholder="Masukkan nama kamu..."
+                    value={namaPemesan}
+                    onChange={e => setNamaPemesan(e.target.value)}
+                    required
+                  />
                 </div>
                 {err && <div className="err-box">{err}</div>}
                 <div className="drawer-footer">
