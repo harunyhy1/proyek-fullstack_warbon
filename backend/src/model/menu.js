@@ -3,8 +3,8 @@ const db = require('../config/db'); // Pastikan ini mengarah ke file koneksi db 
 class Menu {
     // Menampilkan semua data menu
     static getAll() {
-        const sql = "SELECT * FROM menu";
-        return db.query(sql); // Mengembalikan promise, bukan callback
+        const sql = "SELECT * FROM menu ORDER BY created_at DESC";
+        return db.query(sql);
     }
 
     // Menampilkan data by id
@@ -16,25 +16,27 @@ class Menu {
     // Create model data 
     static create(data) {
         const sql = `
-        INSERT INTO menu (id_kategori, nama_menu, harga)
-        VALUES (?, ?, ?)
+        INSERT INTO menu (id_kategori, nama_menu, harga, gambar)
+        VALUES (?, ?, ?, ?)
         `;
         return db.query(sql, [
-            data.id_kategori || null, // Membolehkan null jika kategori belum ada
+            data.id_kategori || null,
             data.nama_menu,
-            data.harga
+            data.harga,
+            data.gambar || null
         ]);
     }
 
     // Update model data
     static update(id, data) {
         const sql = `
-        UPDATE menu SET id_kategori = ?, nama_menu = ?, harga = ? WHERE id_menu = ?
+        UPDATE menu SET id_kategori = ?, nama_menu = ?, harga = ?, gambar = ? WHERE id_menu = ?
         `;
         return db.query(sql, [
             data.id_kategori || null,
             data.nama_menu,
             data.harga,
+            data.gambar || null,
             id
         ]);
     }

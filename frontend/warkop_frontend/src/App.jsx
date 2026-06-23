@@ -35,12 +35,12 @@ function AppInner() {
       {currentPage === 'landing' && <LandingPage onNavigate={setPage} onShowAuth={() => setShowAuth(true)} />}
 
       <main className="app-main">
-        {currentPage === 'menu'  && <MenuPage  onShowAuth={() => setShowAuth(true)} />}
-        {currentPage === 'admin' && <AdminPage />}
+        {currentPage === 'menu'  && <MenuPage  onShowAuth={() => setShowAuth(true)} onNavigate={setPage} />}
+        {currentPage === 'admin' && <AdminPage onNavigate={setPage} />}
       </main>
 
       {showAuth && (
-        <AuthPage onSuccess={handleAuthSuccess} />
+        <AuthPage onSuccess={handleAuthSuccess} onClose={() => setShowAuth(false)} />
       )}
     </div>
   );

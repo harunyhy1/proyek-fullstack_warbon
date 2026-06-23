@@ -5,14 +5,16 @@ class Order {
     static async getAll() {
         const query = `
             SELECT o.*,
+                    u.nama AS nama_user,
                     COALESCE((SELECT SUM(subtotal) FROM order_detail od WHERE od.id_order = o.id_order), 0) AS total_tagihan
             FROM orders o
+            LEFT JOIN users u ON o.id_user = u.id_user
             ORDER BY o.tanggal DESC
         `;
         const [rows] = await db.query(query);
         return rows;
     }
-    static async createOrder(id_user, tipe_layanan, items) {
+    static async createOrder(id_user, tipe_layanan, items, nama_pemesan = null) {
         const connection = await db.getConnection(); 
         
         try {
@@ -38,8 +40,8 @@ class Order {
 
             const kode_order = `ORD-${Date.now()}`;
 
-            const queryOrder = `INSERT INTO orders (kode_order, tipe_layanan, status, id_user) VALUES (?, ?, 'pending', ?)`;
-            const [orderResult] = await connection.query(queryOrder, [kode_order, tipe_layanan, id_user]);
+            const queryOrder = `INSERT INTO orders (kode_order, tipe_layanan, status, id_user, nama_pemesan) VALUES (?, ?, 'pending', ?, ?)`;
+            const [orderResult] = await connection.query(queryOrder, [kode_order, tipe_layanan, id_user, nama_pemesan]);
             const id_order = orderResult.insertId;
 
             // PERBAIKAN: Sesuaikan query agar menyuntikkan id_order, id_menu, jumlah, HARGA, dan subtotal

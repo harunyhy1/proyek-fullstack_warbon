@@ -5,14 +5,13 @@ class OrderController {
     async create(req, res) {
         try {
             const id_user = req.user ? req.user.id : null;
-            // Ambil tipe_layanan, catatan dihapus karena tidak ada di DB
-            const { tipe_layanan, items } = req.body;
+            const { tipe_layanan, items, nama_pemesan } = req.body;
 
             if (!items || items.length === 0) {
                 return errorHandler(res, "Keranjang belanja kosong", 400, "Bad Request");
             }
 
-            const result = await Order.createOrder(id_user, tipe_layanan, items);
+            const result = await Order.createOrder(id_user, tipe_layanan, items, nama_pemesan);
 
             res.status(201).json({
                 success: true,

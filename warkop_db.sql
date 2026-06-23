@@ -43,6 +43,7 @@ CREATE TABLE `menu` (
   `id_kategori` int(11) DEFAULT NULL,
   `nama_menu` varchar(150) NOT NULL,
   `harga` int(11) NOT NULL,
+  `gambar` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -58,7 +59,8 @@ CREATE TABLE `orders` (
   `tanggal` timestamp NOT NULL DEFAULT current_timestamp(),
   `tipe_layanan` varchar(20) DEFAULT NULL,
   `status` varchar(20) DEFAULT NULL,
-  `id_user` int(11) DEFAULT NULL
+  `id_user` int(11) DEFAULT NULL,
+  `nama_pemesan` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

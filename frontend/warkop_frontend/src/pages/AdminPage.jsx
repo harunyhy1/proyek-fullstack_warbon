@@ -7,14 +7,16 @@ import {
   deleteMenu,
   getOrders,
   getTransaksi,
-  bayar
+  bayar,
+  uploadImage,
+  UPLOADS_URL
 } from '../api';
 
 function formatRp(n) {
   return 'Rp ' + Number(n).toLocaleString('id-ID');
 }
 
-export default function AdminPage() {
+export default function AdminPage({ onNavigate }) {
   const [tab, setTab]             = useState('dashboard'); // 'dashboard' | 'orders' | 'transaksi' | 'menu' | 'kategori'
   const [menu, setMenu]           = useState([]);
   const [kategori, setKategori]   = useState([]);
@@ -24,7 +26,6 @@ export default function AdminPage() {
   const [err, setErr]             = useState('');
   const [toast, setToast]         = useState(null);
   const [time, setTime] = useState(new Date());
-  
 
   // Modal state untuk Menu
   const [modal, setModal]     = useState(null);  // null | 'menu'
@@ -33,6 +34,8 @@ export default function AdminPage() {
   const [form, setForm]       = useState({ id_kategori: '', nama_menu: '', harga: '' });
   const [editId, setEditId]   = useState(null);
   const [saving, setSaving]   = useState(false);
+  const [gambarFile, setGambarFile] = useState(null);
+  const [gambarPreview, setGambarPreview] = useState(null);
 
   // ── FUNGSI SUARA SINTESIS 
   function playNotificationSound() {
@@ -132,11 +135,12 @@ export default function AdminPage() {
       setOrders(prevOrders => {
         // Jika jumlah orderan di database bertambah dari jumlah sebelumnya
         if (prevOrders.length > 0 && newOrders.length > prevOrders.length) {
-          const latestOrder = newOrders[newOrders.length - 1]; // Ambil orderan paling terakhir masuk
+          const latestOrder = newOrders[newOrders.length - 1];
+          const nama = latestOrder.nama_pemesan || latestOrder.nama_user || '';
           
-          // Trigger Toast Pop-up
           setToast({
             kode: latestOrder.kode_order,
+            nama: nama,
             total: latestOrder.total_tagihan
           });
           
@@ -169,12 +173,16 @@ export default function AdminPage() {
   // Handler Menu (Bawaan lama tetap aman bray)
   function openAdd() {
     setForm({ id_kategori: kategori[0]?.id_kategori || '', nama_menu: '', harga: '' });
+    setGambarFile(null);
+    setGambarPreview(null);
     setEditId(null);
     setModal('menu');
   }
 
   function openEdit(m) {
     setForm({ id_kategori: m.id_kategori || '', nama_menu: m.nama_menu, harga: m.harga });
+    setGambarFile(null);
+    setGambarPreview(m.gambar ? `${UPLOADS_URL}/${m.gambar}` : null);
     setEditId(m.id_menu);
     setModal('menu');
   }
@@ -184,9 +192,23 @@ export default function AdminPage() {
     setSaving(true);
     setErr('');
     try {
-      const body = { id_kategori: form.id_kategori || null, nama_menu: form.nama_menu, harga: parseInt(form.harga) };
-      if (editId) await updateMenu(editId, body);
-      else        await createMenu(body);
+      let gambar;
+      if (gambarFile) {
+        const uploadRes = await uploadImage(gambarFile);
+        gambar = uploadRes.filename;
+      }
+      const body = {
+        id_kategori: form.id_kategori || null,
+        nama_menu: form.nama_menu,
+        harga: parseInt(form.harga),
+      };
+      if (editId) {
+        if (gambar) body.gambar = gambar;
+        await updateMenu(editId, body);
+      } else {
+        body.gambar = gambar || null;
+        await createMenu(body);
+      }
       setModal(null);
       loadData();
     } catch (e) {
@@ -245,6 +267,18 @@ export default function AdminPage() {
       {/* ── MAIN CONTENT AREA ── */}
       <div className="admin-main">
         {err && <div className="err-box" style={{marginBottom: '15px'}}>⚠️ Error: {err}</div>}
+
+        {/* ── Tombol Kembali ── */}
+        <button
+          onClick={() => onNavigate('menu')}
+          style={{
+            background: 'none', border: 'none', color: '#ffb347', cursor: 'pointer',
+            fontSize: '15px', padding: '0 0 15px 0', display: 'flex', alignItems: 'center', gap: '6px',
+            marginTop: '-5px'
+          }}
+        >
+          ← Kembali ke Menu
+        </button>
 
         {/* ── 1. DASHBOARD TAB OVERVIEW ── */}
         {tab === 'dashboard' && (
@@ -312,12 +346,19 @@ export default function AdminPage() {
                   <div className="mini-card-panel" style={{background: '#1e1e1e', padding: '20px', borderRadius: '12px'}}>
                     <h3>🛎️ Pesanan Terbaru</h3>
                     <ul style={{listStyle: 'none', padding: 0, marginTop: '10px'}}>
-                      {orders.slice(-5).reverse().map(o => (
+                      {orders.slice(-5).reverse().map(o => {
+                        const nama = o.nama_pemesan || o.nama_user || '';
+                        return (
                         <li key={o.id_order} style={{display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #333'}}>
-                          <span>{o.kode_order} <small style={{color: '#888'}}>({o.tipe_layanan === 'dine_in' ? 'Makan Di Sini' : 'Bawa Pulang'})</small></span>
+                          <span>
+                            <strong style={{color: '#FF9057'}}>{o.kode_order}</strong>
+                            {nama && <small style={{color: '#aaa', marginLeft: '6px'}}>({nama})</small>}
+                            <br />
+                            <small style={{color: '#888'}}>{o.tipe_layanan === 'dine_in' ? '🍽️ Makan Di Sini' : '📦 Bawa Pulang'}</small>
+                          </span>
                           <strong style={{color: 'var(--accent-color)'}}>{formatRp(o.total_tagihan)}</strong>
                         </li>
-                      ))}
+                      );})}
                       {orders.length === 0 && <p style={{color: '#666'}}>Belum ada pesanan hari ini.</p>}
                     </ul>
                   </div>
@@ -368,66 +409,59 @@ export default function AdminPage() {
             </div>
             {loading ? <Spinner /> : (
               <div className="admin-table-wrap">
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Kode Order</th>
-                      <th>Tipe Layanan</th>
-                      <th>Total Tagihan</th>
-                      <th>Status Pembayaran</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orders.map(o => {
-                      const isPaid = transaksi.some(t => t.id_order === o.id_order);
-                      return (
-                        <tr key={o.id_order}>
-                          <td><strong style={{color: '#FF9057'}}>{o.kode_order}</strong></td>
-                          <td>
-                            <span className={`badge ${o.tipe_layanan}`}>
-                              {o.tipe_layanan === 'dine_in' ? '🍽️ Dine In' : '📦 Take Away'}
-                            </span>
-                          </td>
-                          <td><strong>{formatRp(o.total_tagihan)}</strong></td>
-                          <td>
-                            {o.status === 'selesai' ? (
-                              <span style={{
-                                padding: '4px 10px',
-                                borderRadius: '20px',
-                                fontSize: '12px',
-                                background: 'rgba(45, 212, 160, 0.2)',
-                                color: '#2DD4A0',
-                                border: '1px solid #2DD4A0'
-                              }}>
-                                ✓ Lunas
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Kode Order</th>
+                        <th>Pelanggan</th>
+                        <th>Tipe Layanan</th>
+                        <th>Total Tagihan</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {orders.map(o => {
+                        const isPaid = transaksi.some(t => t.id_order === o.id_order);
+                        const nama = o.nama_pemesan || o.nama_user || '(Tanpa Nama)';
+                        return (
+                          <tr key={o.id_order}>
+                            <td><strong style={{color: '#FF9057'}}>{o.kode_order}</strong></td>
+                            <td><span style={{fontWeight: 600}}>{nama}</span></td>
+                            <td>
+                              <span className={`badge ${o.tipe_layanan}`}>
+                                {o.tipe_layanan === 'dine_in' ? '🍽️ Dine In' : '📦 Take Away'}
                               </span>
-                            ) : (
-                              <button
-                                onClick={() => setModalBayar(o.id_order)}
-                                style={{
-                                  padding: '6px 12px',
-                                  borderRadius: '6px',
-                                  fontSize: '12px',
-                                  background: '#FF9057',
-                                  color: '#fff',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  fontWeight: 'bold',
-                                  boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
-                                }}
-                              >
-                                ⏳ Proses Bayar
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                    {orders.length === 0 && (
-                      <tr><td colSpan="4" style={{textAlign:'center', color:'#666'}}>Belum ada pesanan masuk.</td></tr>
-                    )}
-                  </tbody>
-                </table>
+                            </td>
+                            <td><strong>{formatRp(o.total_tagihan)}</strong></td>
+                            <td>
+                              {o.status === 'selesai' ? (
+                                <span style={{
+                                  padding: '4px 10px', borderRadius: '20px', fontSize: '12px',
+                                  background: 'rgba(45, 212, 160, 0.2)', color: '#2DD4A0', border: '1px solid #2DD4A0'
+                                }}>
+                                  ✓ Lunas
+                                </span>
+                              ) : (
+                                <button
+                                  onClick={() => setModalBayar(o.id_order)}
+                                  style={{
+                                    padding: '6px 12px', borderRadius: '6px', fontSize: '12px',
+                                    background: '#FF9057', color: '#fff', border: 'none',
+                                    cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                                  }}
+                                >
+                                  ⏳ Proses Bayar
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {orders.length === 0 && (
+                        <tr><td colSpan="5" style={{textAlign:'center', color:'#666'}}>Belum ada pesanan masuk.</td></tr>
+                      )}
+                    </tbody>
+                  </table>
               </div>
             )}
           </>
@@ -489,6 +523,7 @@ export default function AdminPage() {
                 <table className="admin-table">
                   <thead>
                     <tr>
+                      <th>Gambar</th>
                       <th>ID</th>
                       <th>Nama Menu</th>
                       <th>Kategori</th>
@@ -501,6 +536,15 @@ export default function AdminPage() {
                       const kat = kategori.find(k => k.id_kategori === m.id_kategori);
                       return (
                         <tr key={m.id_menu}>
+                          <td>
+                            {m.gambar ? (
+                              <img src={`${UPLOADS_URL}/${m.gambar}`} alt={m.nama_menu}
+                                style={{width: '44px', height: '44px', borderRadius: '6px', objectFit: 'cover'}}
+                              />
+                            ) : (
+                              <span style={{color: 'var(--muted)', fontSize: '11px'}}>—</span>
+                            )}
+                          </td>
                           <td><span className="tbl-id">#{m.id_menu}</span></td>
                           <td><strong>{m.nama_menu}</strong></td>
                           <td><span className="tbl-kat">{kat?.nama_kategori || '—'}</span></td>
@@ -568,6 +612,34 @@ export default function AdminPage() {
                 />
               </div>
               <div className="field">
+                <label>Gambar Menu</label>
+                <div className="upload-area" style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                  {(gambarPreview || form.gambar) && (
+                    <img
+                      src={gambarPreview || (form.gambar ? `${UPLOADS_URL}/${form.gambar}` : null)}
+                      alt="Preview"
+                      style={{width: '64px', height: '64px', borderRadius: '8px', objectFit: 'cover', border: '1px solid var(--border)'}}
+                    />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/gif,image/webp"
+                    onChange={e => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setGambarFile(file);
+                        setGambarPreview(URL.createObjectURL(file));
+                      }
+                    }}
+                    style={{
+                      background: 'var(--bg3)', border: '1px solid var(--border)',
+                      borderRadius: 'var(--r-sm)', color: 'var(--muted2)', padding: '8px',
+                      fontSize: '12px', flex: 1
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="field">
                 <label>Harga (Rp)</label>
                 <input
                   type="number"
@@ -605,7 +677,7 @@ export default function AdminPage() {
           <div className="toast-icon">🛎️</div>
           <div className="toast-body">
             <div className="toast-title">Pesanan Baru Masuk!</div>
-            <div className="toast-desc">Kode: <strong>{toast.kode}</strong></div>
+            <div className="toast-desc">Kode: <strong>{toast.kode}</strong>{toast.nama ? ` — ${toast.nama}` : ''}</div>
             <div className="toast-sub">{formatRp(toast.total)} • Segera cek dapur</div>
           </div>
           <button className="toast-close">✕</button>

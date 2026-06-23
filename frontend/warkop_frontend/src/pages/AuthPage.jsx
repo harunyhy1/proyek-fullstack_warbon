@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { login, register } from '../api';
 import { useAuth } from '../context/AuthContext';
 
-export default function AuthPage({ onSuccess }) {
+export default function AuthPage({ onSuccess, onClose }) {
   const { loginUser } = useAuth();
   const [mode, setMode] = useState('login'); // 'login' | 'register'
   const [form, setForm] = useState({ nama: '', email: '', password: '' });
@@ -38,8 +38,15 @@ export default function AuthPage({ onSuccess }) {
   }
 
   return (
-    <div className="auth-overlay">
-      <div className="auth-card">
+    <div className="auth-overlay" onClick={onClose}>
+      <div className="auth-card" style={{position:'relative'}} onClick={e => e.stopPropagation()}>
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute', top: '12px', right: '16px', background: 'none',
+            border: 'none', color: '#999', fontSize: '22px', cursor: 'pointer', lineHeight: 1, zIndex: 1
+          }}
+        >✕</button>
         <div className="auth-brand">
           <span className="auth-logo">☕</span>
           <h1>Warkop Sibontot</h1>

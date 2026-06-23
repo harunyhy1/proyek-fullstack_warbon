@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getMenu, getKategori, createOrder, bayar } from '../api';
+import { getMenu, getKategori, createOrder, bayar, UPLOADS_URL } from '../api';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -7,7 +7,7 @@ function formatRp(n) {
   return 'Rp ' + Number(n).toLocaleString('id-ID');
 }
 
-export default function MenuPage({ onShowAuth }) {
+export default function MenuPage({ onShowAuth, onNavigate }) {
   const { user } = useAuth();
   const { items, addItem, removeItem, updateQty, clearCart, total, itemCount } = useCart();
 
@@ -46,33 +46,16 @@ export default function MenuPage({ onShowAuth }) {
   });
 
   async function handleOrder() {
-    
     if (items.length === 0) return;
-    setProcessing(true);
-    setErr('');
-    try {
-      const res = await createOrder({
-        tipe_layanan: tipeLayanan,
-        items: items.map(i => ({ id_menu: i.id_menu, jumlah: i.jumlah })),
-      });
-      setOrderResult(res.data);
-      setStep('bayar');
-    } catch (e) {
-      setErr(e.message);
-    } finally {
-      setProcessing(false);
-    }
-
     if (!namaPemesan.trim()) {
       setErr('Mohon masukkan nama kamu agar pesanan tidak tertukar ya!');
       return;
     }
-
     setProcessing(true);
     setErr('');
     try {
       const res = await createOrder({
-        nama_pemesan: namaPemesan, // Kirimkan nama ke backend
+        nama_pemesan: namaPemesan,
         tipe_layanan: tipeLayanan,
         items: items.map(i => ({ id_menu: i.id_menu, jumlah: i.jumlah })),
       });
@@ -86,15 +69,10 @@ export default function MenuPage({ onShowAuth }) {
   }
 
   async function handleBayar() {
-
-    if (!namaPemesan.trim()) {
-      setErr('Mohon masukkan nama kamu agar pesanan tidak tertukar!');
-      return;
-    }
     setProcessing(true);
     setErr('');
     try {
-      const res = await bayar({ id_order: orderResult.id_order, metode_pembayaran: metodeBayar, nama_pemesan: namaPemesan });
+      const res = await bayar({ id_order: orderResult.id_order, metode_pembayaran: metodeBayar });
       setTransaksiResult(res.data);
       setStep('sukses');
       clearCart();
@@ -116,7 +94,18 @@ export default function MenuPage({ onShowAuth }) {
   return (
     <div className="menu-page" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       
-      {/* ── FITUR BARU: Search Bar Premium di Bagian Atas ── */}
+      {/* ── Tombol Kembali ── */}
+      <button
+        onClick={() => onNavigate('landing')}
+        style={{
+          background: 'none', border: 'none', color: '#ffb347', cursor: 'pointer',
+          fontSize: '15px', padding: '0 0 15px 0', display: 'flex', alignItems: 'center', gap: '6px'
+        }}
+      >
+        ← Kembali ke Beranda
+      </button>
+
+      {/* ── Search Bar ── */}
       <div className="search-wrapper" style={{ marginBottom: '25px' }}>
         <input 
           type="text" 
@@ -163,37 +152,26 @@ export default function MenuPage({ onShowAuth }) {
           {filtered.map(m => {
             const inCart = items.find(i => i.id_menu === m.id_menu);
             return (
-              <div key={m.id_menu} className="menu-card" style={{ background: '#1e1e1e', borderRadius: '12px', padding: '20px', position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                
-                {/* FITUR BARU: Badge Tag Rekomendasi di Sudut Atas Card */}
-                <span style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(255, 144, 87, 0.15)', color: '#FF9057', fontSize: '11px', padding: '4px 10px', borderRadius: '20px', fontWeight: 'bold' }}>
-                  🔥 Best Seller
-                </span>
-
-                <div className="menu-img" style={{ fontSize: '50px', textAlign: 'center', margin: '15px 0 10px 0' }}>
-                  {getCategoryEmoji(m.id_kategori, kategori)}
+              <div key={m.id_menu} className="menu-card">
+                <div className="menu-img">
+                  {m.gambar ? (
+                    <img src={`${UPLOADS_URL}/${m.gambar}`} alt={m.nama_menu} className="menu-img-actual" />
+                  ) : (
+                    <span className="menu-img-emoji">{getCategoryEmoji(m.id_kategori, kategori)}</span>
+                  )}
                 </div>
-
-                <div className="menu-body" style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                  <h3 style={{ fontSize: '16px', margin: '0 0 6px 0', color: '#fff' }}>{m.nama_menu}</h3>
-                  
-                  {/* FITUR BARU: Deskripsi Menu Biar Card Keliatan Berisi & Padat */}
-                  <p style={{ fontSize: '12px', color: '#aaa', margin: '0 0 20px 0', lineHeight: '1.4', flexGrow: 1 }}>
-                    Racikan mantap khas Warkop Digital, dibuat fresh pas lo order bray.
-                  </p>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                    <span className="menu-price" style={{ color: '#FF9057', fontWeight: 'bold', fontSize: '15px' }}>{formatRp(m.harga)}</span>
-                    {inCart ? (
-                      <div className="qty-ctrl">
-                        <button onClick={() => updateQty(m.id_menu, inCart.jumlah - 1)}>−</button>
-                        <span>{inCart.jumlah}</span>
-                        <button onClick={() => updateQty(m.id_menu, inCart.jumlah + 1)}>+</button>
-                      </div>
-                    ) : (
-                      <button className="add-btn" onClick={() => addItem(m)}>+ Tambah</button>
-                    )}
-                  </div>
+                <div className="menu-body">
+                  <h3>{m.nama_menu}</h3>
+                  <span className="menu-price">{formatRp(m.harga)}</span>
+                  {inCart ? (
+                    <div className="qty-ctrl">
+                      <button onClick={() => updateQty(m.id_menu, inCart.jumlah - 1)}>−</button>
+                      <span>{inCart.jumlah}</span>
+                      <button onClick={() => updateQty(m.id_menu, inCart.jumlah + 1)}>+</button>
+                    </div>
+                  ) : (
+                    <button className="add-btn" onClick={() => addItem(m)}>+ Tambah</button>
+                  )}
                 </div>
               </div>
             );
@@ -293,6 +271,7 @@ export default function MenuPage({ onShowAuth }) {
             {step === 'bayar' && orderResult && (
               <>
                 <div className="drawer-hdr">
+                  <button className="back-btn" onClick={() => setStep('tipe')}>← Kembali</button>
                   <h2>💳 Pembayaran</h2>
                 </div>
                 <div className="order-info-box">

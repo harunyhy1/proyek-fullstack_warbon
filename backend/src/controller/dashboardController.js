@@ -2,18 +2,13 @@ const db = require('../config/db'); // Sesuaikan path ke db.js lo bray
 
 exports.getDashboardOverview = async (req, res) => {
   try {
-    // ── POIN 3: QUERY KARTU RINGKASAN DATA (STATS) ──
-    // A. Ambil total nominal dari transaksi yang udah lunas
-    const [transaksi] = await db.promise().query("SELECT SUM(total_harga) AS total_pendapatan FROM transaksi");
-    // B. Hitung total baris di tabel orders
-    const [ordersCount] = await db.promise().query("SELECT COUNT(*) AS total_pesanan FROM orders");
-    // C. Hitung pelanggan unik yang pernah bertransaksi
-    const [pelangganCount] = await db.promise().query("SELECT COUNT(DISTINCT id_user) AS pelanggan_aktif FROM orders");
+    const [transaksi] = await db.query("SELECT SUM(total_harga) AS total_pendapatan FROM transaksi");
+    const [ordersCount] = await db.query("SELECT COUNT(*) AS total_pesanan FROM orders");
+    const [pelangganCount] = await db.query("SELECT COUNT(DISTINCT id_user) AS pelanggan_aktif FROM orders");
 
-    // ── POIN 2: QUERY LIVE TRACKER (TABEL PESANAN TERBARU) ──
-    // Ambil 5 pesanan terbaru, gabungkan dengan nama user, dan ringkas itemnya
-    const [recentOrders] = await db.promise().query(`
-      SELECT o.id_order, u.nama AS nama_pelanggan, o.tipe_layanan, o.status, o.total_tagihan,
+    const [recentOrders] = await db.query(`
+      SELECT o.id_order, COALESCE(o.nama_pemesan, u.nama) AS nama_pelanggan, o.tipe_layanan, o.status,
+             COALESCE((SELECT SUM(subtotal) FROM order_detail od WHERE od.id_order = o.id_order), 0) AS total_tagihan,
              (SELECT GROUP_CONCAT(CONCAT(m.nama_menu, ' x', od.jumlah) SEPARATOR ', ') 
               FROM order_detail od 
               JOIN menu m ON od.id_menu = m.id_menu 

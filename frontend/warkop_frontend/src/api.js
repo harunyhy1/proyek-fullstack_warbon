@@ -5,6 +5,7 @@
 // ============================================================
 
 const BASE = 'http://localhost:5000/api';
+const UPLOADS_URL = 'http://localhost:5000/uploads';
 
 // Helper: tambah Authorization header jika ada token
 function headers(withAuth = false) {
@@ -26,6 +27,18 @@ async function request(method, path, body, withAuth = false) {
   if (!res.ok) throw new Error(data.message || 'Terjadi kesalahan');
   return data;
 }
+
+// ── UPLOAD ────────────────────────────────────────────────
+export async function uploadImage(file) {
+  const form = new FormData();
+  form.append('gambar', file);
+  const res = await fetch(`${BASE}/upload`, { method: 'POST', body: form });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Gagal upload');
+  return data;
+}
+
+export { UPLOADS_URL };
 
 // ── AUTH ──────────────────────────────────────────────────
 // POST /api/auth/register  body: { nama, email, password, role? }
