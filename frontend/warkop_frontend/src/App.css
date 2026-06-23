@@ -761,6 +761,216 @@ html, body {
 
 
 /* =====================================================
+   HAMBURGER MENU (Mobile Navbar)
+   ===================================================== */
+.nav-hamburger {
+  display: none;
+  width: 36px; height: 36px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  margin-left: auto;
+  align-items: center;
+  justify-content: center;
+  transition: .15s;
+}
+.nav-hamburger:hover { background: var(--card); }
+
+.hamb-line,
+.hamb-line::before,
+.hamb-line::after {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--muted2);
+  border-radius: 2px;
+  transition: .2s;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.hamb-line::before { content: ''; transform: translate(-50%, -7px); }
+.hamb-line::after  { content: ''; transform: translate(-50%, 5px); }
+.hamb-line.open { background: transparent; }
+.hamb-line.open::before { transform: translate(-50%, 0) rotate(45deg); }
+.hamb-line.open::after  { transform: translate(-50%, 0) rotate(-45deg); }
+
+.nav-mobile-menu {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+/* =====================================================
+   RESPONSIVE — TABLETS & MOBILE
+   ===================================================== */
+
+/* ── < 900px: Admin sidebar → bottom tabs ── */
+@media (max-width: 900px) {
+  .admin-page {
+    flex-direction: column;
+    min-height: auto;
+  }
+  .admin-sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    height: auto;
+    width: 100%;
+    flex-direction: row;
+    padding: 6px 4px;
+    border-right: none;
+    border-top: 1px solid var(--border);
+    z-index: 150;
+    gap: 2px;
+    overflow-x: auto;
+    justify-content: center;
+  }
+  .sidebar-brand { display: none; }
+  .sidebar-nav {
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 10px;
+    font-size: 11px;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 0 1 auto;
+    text-align: center;
+  }
+  .sidebar-nav .nav-icon { font-size: 16px; }
+  .sidebar-nav .nav-label { font-size: 9px; }
+  .admin-main {
+    padding: 16px;
+    padding-bottom: 70px;
+  }
+  .admin-header { flex-direction: column; gap: 6px; }
+  .admin-header h1 { font-size: 18px; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .stat-card { padding: 14px; }
+  .sc-val { font-size: 18px; }
+  .admin-menu-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .modal-card { max-width: 92vw; margin: 10px; }
+  .modal-hdr { padding: 16px 18px; }
+  .modal-form { padding: 16px 18px; }
+}
+
+/* ── < 768px: Navbar mobile ── */
+@media (max-width: 768px) {
+  .dash-navbar { padding: 0 12px; gap: 0; }
+  .nav-hamburger { display: flex; }
+  .nav-mobile-menu {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-direction: column;
+    padding: 12px 16px;
+    gap: 12px;
+    display: none;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  }
+  .nav-mobile-menu.open { display: flex; }
+  .nav-links {
+    margin-left: 0;
+    flex-direction: column;
+    width: 100%;
+  }
+  .nav-link { width: 100%; text-align: center; padding: 10px; }
+  .nav-right { margin-left: 0; width: 100%; }
+  .nav-user { width: 100%; justify-content: center; }
+  .nav-login-btn { width: 100%; text-align: center; }
+
+  .menu-page { padding: 12px; }
+  .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .menu-img { height: 120px; }
+  .menu-body { padding: 10px; }
+  .menu-body h3 { font-size: 12px; }
+  .menu-price { font-size: 13px; }
+  .kat-bar { gap: 6px; }
+  .kat-btn { padding: 6px 12px; font-size: 11px; }
+
+  .drawer { max-width: 100%; }
+  .sukses-view h2 { font-size: 18px; }
+  .sukses-icon { font-size: 42px; }
+
+  .cart-fab { bottom: 16px; right: 16px; padding: 12px 18px; font-size: 13px; }
+}
+
+/* ── < 480px: Small phones ── */
+@media (max-width: 480px) {
+  .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .menu-img { height: 100px; }
+  .menu-body h3 { font-size: 11px; }
+  .menu-price { font-size: 12px; }
+  .add-btn { font-size: 11px; padding: 7px; }
+  .qty-ctrl button { width: 30px; height: 30px; font-size: 14px; }
+  .qty-ctrl span { font-size: 12px; }
+
+  .search-wrapper input { padding: 10px 14px !important; font-size: 13px !important; }
+
+  .auth-card {
+    max-width: 100%;
+    margin: 10px;
+    border-radius: 14px;
+    padding: 24px 20px;
+  }
+  .auth-logo { font-size: 32px; }
+  .auth-brand h1 { font-size: 18px; }
+
+  .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .stat-card { padding: 12px; }
+  .sc-val { font-size: 16px; }
+  .sc-icon { font-size: 22px; }
+
+  .admin-main { padding: 12px; padding-bottom: 70px; }
+  .admin-sidebar { padding: 4px 2px; }
+  .sidebar-nav { padding: 4px 8px; }
+  .sidebar-nav .nav-icon { font-size: 14px; }
+  .sidebar-nav .nav-label { font-size: 8px; }
+
+  .admin-table th,
+  .admin-table td { padding: 6px 8px; font-size: 11px; }
+
+  .drawer-hdr { padding: 14px 16px; }
+  .drawer-hdr h2 { font-size: 14px; }
+  .cart-items { padding: 8px 16px; }
+  .drawer-footer { padding: 12px 16px; }
+
+  .tipe-card { padding: 12px; }
+  .tipe-icon { font-size: 22px; }
+  .metode-list { padding: 12px 16px; }
+  .order-info-box { margin: 12px; padding: 14px; }
+  .order-total-val { font-size: 22px; }
+
+  .toast-notification {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    min-width: auto;
+  }
+}
+
+/* ── Touch-friendly: bigger tap targets on mobile ── */
+@media (pointer: coarse) {
+  .kat-btn, .nav-link, .sidebar-nav, .add-btn, .checkout-btn,
+  .btn-edit, .btn-del, .btn-primary, .btn-cancel, .nav-logout, .nav-login-btn {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qty-ctrl button { min-width: 44px; min-height: 44px; }
+}
+
+/* =====================================================
    ANIMATIONS
    ===================================================== */
 @keyframes fadeIn       { from { opacity: 0 } to { opacity: 1 } }
